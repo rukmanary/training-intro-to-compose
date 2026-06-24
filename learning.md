@@ -26,5 +26,27 @@ Dokumentasi ini berisi poin-poin penting yang dipelajari selama pengembangan apl
     *   Akses nilai langsung tanpa `.value`, membuat kode lebih bersih.
     *   **Penting:** Membutuhkan import `androidx.compose.runtime.getValue` dan `setValue`.
 
-## 5. State Hoisting
-*   Untuk mengubah UI di satu tempat (misal: `Text` skor) berdasarkan aksi di tempat lain (misal: klik pada `Circle`), State harus ditaruh di fungsi "Parent" (induk) dan dikirimkan ke "Child" melalui parameter.
+## 5. State Hoisting & Lambda Patterns
+*   **Data Down, Events Up:** State ditaruh di Parent, dikirim ke Child sebagai parameter, dan perubahan dikirim balik ke Parent via Lambda (callback).
+*   **Pola Lambda (Best Practice):**
+    *   **Opsi A: `() -> Unit` (Direkomendasikan untuk Action/Tombol)**
+        *   Child hanya lapor: "Saya diklik".
+        *   Parent bebas menentukan logikanya (tambah skor, ganti warna, dll).
+        *   Contoh: `Circle(onClick = { moneyCounter += 100 })`.
+    *   **Opsi B: `(T) -> Unit` (Digunakan untuk Input Data)**
+        *   Child mengirimkan nilai baru yang dihasilkannya.
+        *   Contoh: `TextField(onValueChange = { newValue -> text = newValue })`.
+*   **Analisis Perbandingan:**
+    *   Menggunakan `() -> Unit` lebih baik untuk komponen seperti `Circle` karena menjaga komponen tetap **Murni (Pure)** dan **Reusable**. Komponen tidak perlu tahu logika bisnis (seperti harus menambah angka berapa), ia hanya perlu tahu kapan aksi terjadi.
+    *   Menggunakan `(Int) -> Unit` pada tombol cenderung redundan karena Parent biasanya sudah memiliki akses ke State tersebut.
+
+## 6. Jetpack Compose vs React Native (Padanan Konsep)
+*   **Composable Function** ≈ Functional Component.
+*   **Recomposition** ≈ Re-render.
+*   **State Management:** `remember { mutableStateOf }` ≈ `useState`.
+*   **Memoization (Value):** `remember(key) { ... }` ≈ `useMemo`. Digunakan untuk menyimpan hasil perhitungan berat.
+*   **Memoization (Function):** `remember { { ... } }` ≈ `useCallback`. Digunakan untuk menjaga referensi fungsi (lambda) agar tetap sama di antara recomposition.
+*   **Layout:** 
+    *   `Box` ≈ `<View>` dengan gaya stack/absolute.
+    *   `Column/Row` ≈ `<View>` dengan `flexDirection: column/row`.
+*   **Smart Recomposition:** Berbeda dengan React Native yang sering butuh `React.memo` secara manual, Jetpack Compose secara otomatis melewati (skip) proses recomposition jika parameter komponen tidak berubah (otomatis memoized).
