@@ -6,7 +6,7 @@ plugins {
 
 android {
   namespace = "com.rkmn.introtocompose"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  compileSdk { version = release(37) }
 
   defaultConfig {
     applicationId = "com.rkmn.introtocompose"
