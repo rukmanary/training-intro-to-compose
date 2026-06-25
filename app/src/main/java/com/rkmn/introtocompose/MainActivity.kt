@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
+    var moneyCounter by remember { mutableIntStateOf(0) }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -65,7 +66,7 @@ fun MyApp() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "$1000",
+                    text = "$$moneyCounter",
                     style = TextStyle(
                         color = Color.White,
                         fontSize = 35.sp,
@@ -73,7 +74,21 @@ fun MyApp() {
                     )
                 )
                 Spacer(modifier = Modifier.height(80.dp))
-                Circle()
+                Circle() {
+                    moneyCounter += 100
+                }
+
+                if (moneyCounter >= 15000) {
+                    Text(
+                        modifier = Modifier.padding(top = 20.dp),
+                        text = "You are a millionaire",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 35.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
             }
         }
     }
@@ -81,21 +96,20 @@ fun MyApp() {
 
 @Preview(showBackground = true)
 @Composable
-fun Circle() {
-    var moneyCounter by remember { mutableIntStateOf(0) }
+fun Circle(moneyCounter: Int = 0, updateMoneyCounter: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .padding(3.dp)
             .size(100.dp)
             .clickable {
-                moneyCounter += 1
-                Log.d("tapped", "Circle: $moneyCounter")
+                updateMoneyCounter()
+                Log.d("tapped", "Circle: Tapped")
             },
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Add $moneyCounter", modifier = Modifier)
+            Text(text = "Add $100", modifier = Modifier)
         }
     }
 }
